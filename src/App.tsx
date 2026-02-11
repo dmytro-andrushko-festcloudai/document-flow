@@ -2,14 +2,13 @@ import { HashRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import About from './pages/About';
 import Contact from './pages/Contact';
-import './App.css'
+import './App.css';
 
-function App() {  
-
+function App() {
   return (
     <Router>
       <nav style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
-        <Link to="/">Home</Link>
+        <Link to="/">@react-pdf/renderer </Link>
         <Link to="/about">About</Link>
         <Link to="/contact">Contact</Link>
       </nav>
@@ -22,4 +21,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
