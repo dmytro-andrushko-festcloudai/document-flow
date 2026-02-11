@@ -6,7 +6,11 @@ const styles = StyleSheet.create({
   section: { marginBottom: 10 },
 });
 
-function MyDocument({ formData }) {
+function MyDocument({
+  formData,
+}: {
+  formData: { title: string; client: string; details: string };
+}) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -31,7 +35,7 @@ export default function Home() {
     details: '',
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 

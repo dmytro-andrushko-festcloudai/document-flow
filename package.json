@@ -13,6 +13,9 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@pdfme/common": "^5.5.8",
+    "@pdfme/converter": "^5.5.8",
+    "@pdfme/ui": "^5.5.8",
     "@react-pdf/renderer": "^4.3.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
