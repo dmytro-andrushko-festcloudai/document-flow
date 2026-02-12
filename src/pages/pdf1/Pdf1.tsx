@@ -46,7 +46,7 @@ function MyDocument({
   );
 }
 
-export default function Home() {
+export default function Pdf1() {
   const loadInitialData = () => {
     const data = localStorage.getItem('page1FormData');
     if (data) {
@@ -144,75 +144,83 @@ export default function Home() {
 
   return (
     <div style={{ textAlign: 'left' }}>
-      <h2>PDF Generation with @react-pdf/renderer</h2>
+      <h2 className="text-3xl font-medium mb-6">PDF Generation with @react-pdf/renderer</h2>
       <div style={{ marginBottom: '20px' }}>
-        <h3>Fill Template</h3>
-        <div>
-          <label>
-            Company Name:
-            <br />
-            <Input
-              type="text"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-            />
-          </label>
+        <div style={{ marginBottom: '15px' }}>
+          <h4 style={{ marginBottom: '10px', fontWeight: 'bold' }}>Company Information</h4>
+          <div style={{ display: 'flex', gap: '20px' }}>
+            <div style={{ flex: 1 }}>
+              <label>
+                Company Name:
+                <br />
+                <Input
+                  type="text"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                />
+              </label>
+            </div>
+            <div style={{ flex: 1 }}>
+              <label>
+                Company Address:
+                <br />
+                <Input
+                  type="text"
+                  value={companyAddress}
+                  onChange={(e) => setCompanyAddress(e.target.value)}
+                />
+              </label>
+            </div>
+            <div style={{ flex: 1 }}>
+              <label>
+                Company Phone Number:
+                <br />
+                <Input
+                  type="tel"
+                  value={companyPhoneNumber}
+                  onChange={(e) => setCompanyPhoneNumber(e.target.value)}
+                />
+              </label>
+            </div>
+          </div>
         </div>
-        <div>
-          <label>
-            Company Address:
-            <br />
-            <Input
-              type="text"
-              value={companyAddress}
-              onChange={(e) => setCompanyAddress(e.target.value)}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Company Phone Number:
-            <br />
-            <Input
-              type="tel"
-              value={companyPhoneNumber}
-              onChange={(e) => setCompanyPhoneNumber(e.target.value)}
-            />
-          </label>
-        </div>
-        <br />
-        <div>
-          <label>
-            Client Company Name:
-            <br />
-            <Input
-              type="text"
-              value={clientCompanyName}
-              onChange={(e) => setClientCompanyName(e.target.value)}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Client Address:
-            <br />
-            <Input
-              type="text"
-              value={clientAddress}
-              onChange={(e) => setClientAddress(e.target.value)}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Client Phone Number:
-            <br />
-            <Input
-              type="tel"
-              value={clientPhoneNumber}
-              onChange={(e) => setClientPhoneNumber(e.target.value)}
-            />
-          </label>
+        <div style={{ marginTop: '24px' }}>
+          <h4 style={{ marginBottom: '10px', fontWeight: 'bold' }}>Client Information</h4>
+          <div style={{ display: 'flex', gap: '20px' }}>
+            <div style={{ flex: 1 }}>
+              <label>
+                Client Company Name:
+                <br />
+                <Input
+                  type="text"
+                  value={clientCompanyName}
+                  onChange={(e) => setClientCompanyName(e.target.value)}
+                />
+              </label>
+            </div>
+            <div style={{ flex: 1 }}>
+              <label>
+                Client Address:
+                <br />
+                <Input
+                  type="text"
+                  value={clientAddress}
+                  onChange={(e) => setClientAddress(e.target.value)}
+                />
+              </label>
+            </div>
+            <div style={{ flex: 1 }}>
+              <label>
+                Client Phone Number:
+                <br />
+                <Input
+                  type="tel"
+                  value={clientPhoneNumber}
+                  onChange={(e) => setClientPhoneNumber(e.target.value)}
+                />
+              </label>
+            </div>
+          </div>
         </div>
       </div>
 

@@ -4,7 +4,7 @@ import { renderAsync } from 'docx-preview';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
-const Page4 = () => {
+const Docx2 = () => {
   const loadInitialData = () => {
     const data = localStorage.getItem('page4FormData');
     if (data) {
@@ -38,7 +38,6 @@ const Page4 = () => {
   const [clientPhoneNumber, setClientPhoneNumber] = useState(initialData.clientPhoneNumber);
   const [templateBuffer, setTemplateBuffer] = useState<Uint8Array | null>(null);
   const [generatedBuffer, setGeneratedBuffer] = useState<Uint8Array | null>(null);
-  const [myFile, setMyFile] = useState<File | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -82,43 +81,6 @@ const Page4 = () => {
     clientPhoneNumber,
     saveToLocalStorage,
   ]);
-
-  const readFileIntoArrayBuffer = (fd: File) =>
-    new Promise<ArrayBuffer>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onerror = reject;
-      reader.onload = () => {
-        resolve(reader.result as ArrayBuffer);
-      };
-      reader.readAsArrayBuffer(fd);
-    });
-
-  const saveDataToFile = (data: Uint8Array, fileName: string, mimeType: string) => {
-    const blob = new Blob([data as any], { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
-  const onTemplateChosen = async () => {
-    const templateArrayBuffer = await readFileIntoArrayBuffer(myFile!);
-    const template = new Uint8Array(templateArrayBuffer);
-    const report = await createReport({
-      template,
-      data: { name: 'John', surname: 'Appleseed' },
-      noSandbox: true,
-    });
-    saveDataToFile(
-      report,
-      'report.docx',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    );
-  };
 
   const generatePreview = useCallback(async () => {
     if (!templateBuffer) return;
@@ -181,7 +143,6 @@ const Page4 = () => {
         const uint8Array = new Uint8Array(arrayBuffer);
         setTemplateBuffer(uint8Array);
         setGeneratedBuffer(null); // Reset generated buffer when new template is loaded
-        setMyFile(file);
       } catch (error) {
         console.error('Error loading docx:', error);
         alert('Error loading the document. Please check the file.');
@@ -208,93 +169,105 @@ const Page4 = () => {
 
   return (
     <div style={{ textAlign: 'left' }}>
-      <h2>DOCX Templates</h2>
+      <h2 className="text-3xl font-medium mb-6">Advanced DOCX Templates with docx-templates</h2>
       <div style={{ marginBottom: '20px' }}>
-        <h3>Fill Template</h3>
-        <div>
-          <label>
-            Company Name:
-            <Input
-              type="text"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-            />
-          </label>
+        <div style={{ marginBottom: '16px' }}>
+          <h4 style={{ marginBottom: '10px', fontWeight: 'bold' }}>Company Information</h4>
+          <div style={{ display: 'flex', gap: '20px' }}>
+            <div style={{ flex: 1 }}>
+              <label>
+                Company Name:
+                <Input
+                  type="text"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                />
+              </label>
+            </div>
+            <div style={{ flex: 1 }}>
+              <label>
+                Company Address:
+                <Input
+                  type="text"
+                  value={companyAddress}
+                  onChange={(e) => setCompanyAddress(e.target.value)}
+                />
+              </label>
+            </div>
+            <div style={{ flex: 1 }}>
+              <label>
+                Company Phone Number:
+                <Input
+                  type="tel"
+                  value={companyPhoneNumber}
+                  onChange={(e) => setCompanyPhoneNumber(e.target.value)}
+                />
+              </label>
+            </div>
+          </div>
         </div>
-        <div>
-          <label>
-            Company Address:
-            <Input
-              type="text"
-              value={companyAddress}
-              onChange={(e) => setCompanyAddress(e.target.value)}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Company Phone Number:
-            <Input
-              type="tel"
-              value={companyPhoneNumber}
-              onChange={(e) => setCompanyPhoneNumber(e.target.value)}
-            />
-          </label>
-        </div>
-        <br />
-        <div>
-          <label>
-            Client Company Name:
-            <Input
-              type="text"
-              value={clientCompanyName}
-              onChange={(e) => setClientCompanyName(e.target.value)}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Client Address:
-            <Input
-              type="text"
-              value={clientAddress}
-              onChange={(e) => setClientAddress(e.target.value)}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Client Phone Number:
-            <Input
-              type="tel"
-              value={clientPhoneNumber}
-              onChange={(e) => setClientPhoneNumber(e.target.value)}
-            />
-          </label>
-        </div>
-
-        <div style={{ marginBottom: '20px' }}>
-          <h3>Import DOCX Template</h3>
-          <input type="file" accept=".docx" onChange={handleFileUpload} />
+        <div style={{ marginTop: '24px' }}>
+          <h4 style={{ marginBottom: '10px', fontWeight: 'bold' }}>Client Information</h4>
+          <div style={{ display: 'flex', gap: '20px' }}>
+            <div style={{ flex: 1 }}>
+              <label>
+                Client Company Name:
+                <Input
+                  type="text"
+                  value={clientCompanyName}
+                  onChange={(e) => setClientCompanyName(e.target.value)}
+                />
+              </label>
+            </div>
+            <div style={{ flex: 1 }}>
+              <label>
+                Client Address:
+                <Input
+                  type="text"
+                  value={clientAddress}
+                  onChange={(e) => setClientAddress(e.target.value)}
+                />
+              </label>
+            </div>
+            <div style={{ flex: 1 }}>
+              <label>
+                Client Phone Number:
+                <Input
+                  type="tel"
+                  value={clientPhoneNumber}
+                  onChange={(e) => setClientPhoneNumber(e.target.value)}
+                />
+              </label>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
+      <input
+        type="file"
+        accept=".docx"
+        onChange={handleFileUpload}
+        style={{ display: 'none' }}
+        id="docx-upload"
+      />
+      <div
+        style={{ marginTop: '32px', display: 'flex', gap: '12px', justifyContent: 'flex-start' }}
+      >
+        <Button onClick={() => document.getElementById('docx-upload')?.click()} variant="outline">
+          Choose DOCX File
+        </Button>
         <Button onClick={generatePreview} disabled={!templateBuffer}>
           Generate Document
         </Button>
         <Button onClick={downloadDocument} disabled={!generatedBuffer}>
           Download Filled Document
         </Button>
-        <Button onClick={onTemplateChosen} disabled={!myFile}>
-          Generate Simple Report
-        </Button>
       </div>
 
       <div
         ref={previewRef}
         style={{
-          marginTop: '20px',
+          marginTop: '32px',
           border: '1px solid #ccc',
           padding: '20px',
           minHeight: '500px',
@@ -304,4 +277,4 @@ const Page4 = () => {
   );
 };
 
-export default Page4;
+export default Docx2;

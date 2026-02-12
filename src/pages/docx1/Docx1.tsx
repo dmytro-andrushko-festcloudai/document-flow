@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import './style.css';
 
-export default function PageThree() {
+export default function Docx1() {
   const [companyAddress, setCompanyAddress] = useState('Lviv, Ukraine');
   const [companyPhoneNumber, setCompanyPhoneNumber] = useState('032-12345678');
   const [companyName, setCompanyName] = useState('Festcloud.ai');
@@ -103,78 +103,93 @@ export default function PageThree() {
 
   return (
     <div className="page3">
-      <h2>Page Three</h2>
+      <h2 className="text-3xl font-medium mb-6">DOCX Templating with docxtemplater</h2>
       <div style={{ marginBottom: '20px' }}>
-        <h3>Fill Template</h3>
-        <div>
-          <label>
-            Company Name:
-            <Input
-              type="text"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-            />
-          </label>
+        <div style={{ marginBottom: '16px' }}>
+          <h4 style={{ marginBottom: '10px', fontWeight: 'bold' }}>Company Information</h4>
+          <div style={{ display: 'flex', gap: '20px' }}>
+            <div style={{ flex: 1 }}>
+              <label>
+                Company Name:
+                <Input
+                  type="text"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                />
+              </label>
+            </div>
+            <div style={{ flex: 1 }}>
+              <label>
+                Company Address:
+                <Input
+                  type="text"
+                  value={companyAddress}
+                  onChange={(e) => setCompanyAddress(e.target.value)}
+                />
+              </label>
+            </div>
+            <div style={{ flex: 1 }}>
+              <label>
+                Company Phone Number:
+                <Input
+                  type="tel"
+                  value={companyPhoneNumber}
+                  onChange={(e) => setCompanyPhoneNumber(e.target.value)}
+                />
+              </label>
+            </div>
+          </div>
         </div>
-        <div>
-          <label>
-            Company Address:
-            <Input
-              type="text"
-              value={companyAddress}
-              onChange={(e) => setCompanyAddress(e.target.value)}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Company Phone Number:
-            <Input
-              type="tel"
-              value={companyPhoneNumber}
-              onChange={(e) => setCompanyPhoneNumber(e.target.value)}
-            />
-          </label>
-        </div>
-        <br />
-        <div>
-          <label>
-            Client Company Name:
-            <Input
-              type="text"
-              value={clientCompanyName}
-              onChange={(e) => setClientCompanyName(e.target.value)}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Client Address:
-            <Input
-              type="text"
-              value={clientAddress}
-              onChange={(e) => setClientAddress(e.target.value)}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Client Phone Number:
-            <Input
-              type="tel"
-              value={clientPhoneNumber}
-              onChange={(e) => setClientPhoneNumber(e.target.value)}
-            />
-          </label>
-        </div>
-
-        <div style={{ marginBottom: '20px' }}>
-          <h3>Import DOCX Template</h3>
-          <input type="file" accept=".docx" onChange={handleFileUpload} />
+        <div style={{ marginTop: '24px' }}>
+          <h4 style={{ marginBottom: '10px', fontWeight: 'bold' }}>Client Information</h4>
+          <div style={{ display: 'flex', gap: '20px' }}>
+            <div style={{ flex: 1 }}>
+              <label>
+                Client Company Name:
+                <Input
+                  type="text"
+                  value={clientCompanyName}
+                  onChange={(e) => setClientCompanyName(e.target.value)}
+                />
+              </label>
+            </div>
+            <div style={{ flex: 1 }}>
+              <label>
+                Client Address:
+                <Input
+                  type="text"
+                  value={clientAddress}
+                  onChange={(e) => setClientAddress(e.target.value)}
+                />
+              </label>
+            </div>
+            <div style={{ flex: 1 }}>
+              <label>
+                Client Phone Number:
+                <Input
+                  type="tel"
+                  value={clientPhoneNumber}
+                  onChange={(e) => setClientPhoneNumber(e.target.value)}
+                />
+              </label>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
+      <input
+        type="file"
+        accept=".docx"
+        onChange={handleFileUpload}
+        style={{ display: 'none' }}
+        id="docx-upload"
+      />
+      <div
+        style={{ marginTop: '32px', display: 'flex', gap: '12px', justifyContent: 'flex-start' }}
+      >
+        <Button onClick={() => document.getElementById('docx-upload')?.click()} variant="outline">
+          Choose DOCX File
+        </Button>
         <Button onClick={generatePreview} disabled={!templateBuffer}>
           Generate Document
         </Button>
@@ -186,7 +201,7 @@ export default function PageThree() {
       <div
         ref={previewRef}
         style={{
-          marginTop: '20px',
+          marginTop: '32px',
           border: '1px solid #ccc',
           padding: '20px',
           minHeight: '500px',
