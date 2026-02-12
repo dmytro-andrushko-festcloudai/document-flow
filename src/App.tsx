@@ -1,7 +1,7 @@
 import { HashRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import PageOne from './pages/page1/PageOne';
 import PageTwo from './pages/page2/PageTwo';
-import Contact from './pages/page3/Contact';
+import Contact from './pages/page3/PageThree';
 import './App.css';
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
       <nav style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
         <Link to="/">@react-pdf/renderer </Link>
         <Link to="/about">@pdfme</Link>
-        <Link to="/contact">Contact</Link>
+        <Link to="/contact">docxtemplater</Link>
       </nav>
 
       <Routes>

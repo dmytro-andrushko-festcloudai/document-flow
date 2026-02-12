@@ -17,6 +17,10 @@
     "@pdfme/converter": "^5.5.8",
     "@pdfme/ui": "^5.5.8",
     "@react-pdf/renderer": "^4.3.2",
+    "docx": "^9.5.1",
+    "docx-preview": "^0.3.7",
+    "docxtemplater": "^3.67.6",
+    "pizzip": "^3.2.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.0"
