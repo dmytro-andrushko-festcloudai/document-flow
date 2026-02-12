@@ -11,7 +11,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       <div
         ref={ref}
         className={cn(
-          'flex h-full w-70 flex-col border-r bg-background fixed left-0 top-0 z-50',
+          'flex h-full w-75 flex-col border-r bg-background fixed left-0 top-0 z-50',
           className
         )}
         {...props}
@@ -64,7 +64,7 @@ const SidebarMenuButton = React.forwardRef<
   }
 >(({ className, isActive, asChild, children, ...props }, ref) => {
   const buttonClassName = cn(
-    'flex items-center gap-3 rounded-lg p-3 text-sm font-medium transition-all duration-200 hover:bg-accent/90 hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none cursor-pointer',
+    'flex items-center gap-3 rounded-lg p-3 text-sm font-[500] transition-all duration-200 hover:bg-accent/90 hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none cursor-pointer',
     isActive && 'bg-accent text-accent-foreground',
     className
   );

@@ -1,4 +1,4 @@
-import { HashRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import Pdf1 from './pages/pdf1/Pdf1';
 import Pdf2 from './pages/pdf2/Pdf2';
 import Docx1 from './pages/docx1/Docx1';
@@ -19,10 +19,11 @@ function App() {
       <AppSidebar />
       <main className="min-h-screen overflow-auto p-6 ml-75">
         <Routes>
-          <Route path="/" element={<Pdf1 />} />
-          <Route path="/page2" element={<Pdf2 />} />
-          <Route path="/page3" element={<Docx1 />} />
-          <Route path="/page4" element={<Docx2 />} />
+          <Route path="/" element={<Navigate to="/docx1" replace />} />
+          <Route path="/docx1" element={<Docx1 />} />
+          <Route path="/docx2" element={<Docx2 />} />
+          <Route path="/pdf1" element={<Pdf1 />} />
+          <Route path="/pdf2" element={<Pdf2 />} />
         </Routes>
       </main>
     </Router>
@@ -33,13 +34,13 @@ function AppSidebar() {
   const location = useLocation();
 
   const pdfLibraries = [
-    { name: '@react-pdf/renderer', href: '/' },
-    { name: '@pdfme', href: '/page2' },
+    { name: '@react-pdf/renderer', href: '/pdf1' },
+    { name: '@pdfme', href: '/pdf2' },
   ];
 
   const docxLibraries = [
-    { name: 'docxtemplater', href: '/page3' },
-    { name: 'Docx-templates', href: '/page4' },
+    { name: 'docxtemplater(paid modules)', href: '/docx1' },
+    { name: 'docx-templates(free)', href: '/docx2' },
   ];
 
   return (
