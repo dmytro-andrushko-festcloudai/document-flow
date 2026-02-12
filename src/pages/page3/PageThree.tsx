@@ -2,6 +2,8 @@ import { useState, useCallback, useRef } from 'react';
 import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
 import { renderAsync } from 'docx-preview';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import './style.css';
 
 export default function PageThree() {
@@ -100,14 +102,14 @@ export default function PageThree() {
   };
 
   return (
-    <div className='page3'>
+    <div className="page3">
       <h2>Page Three</h2>
       <div style={{ marginBottom: '20px' }}>
         <h3>Fill Template</h3>
         <div>
           <label>
             Company Name:
-            <input
+            <Input
               type="text"
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
@@ -117,7 +119,7 @@ export default function PageThree() {
         <div>
           <label>
             Company Address:
-            <input
+            <Input
               type="text"
               value={companyAddress}
               onChange={(e) => setCompanyAddress(e.target.value)}
@@ -127,7 +129,7 @@ export default function PageThree() {
         <div>
           <label>
             Company Phone Number:
-            <input
+            <Input
               type="tel"
               value={companyPhoneNumber}
               onChange={(e) => setCompanyPhoneNumber(e.target.value)}
@@ -138,7 +140,7 @@ export default function PageThree() {
         <div>
           <label>
             Client Company Name:
-            <input
+            <Input
               type="text"
               value={clientCompanyName}
               onChange={(e) => setClientCompanyName(e.target.value)}
@@ -148,7 +150,7 @@ export default function PageThree() {
         <div>
           <label>
             Client Address:
-            <input
+            <Input
               type="text"
               value={clientAddress}
               onChange={(e) => setClientAddress(e.target.value)}
@@ -158,7 +160,7 @@ export default function PageThree() {
         <div>
           <label>
             Client Phone Number:
-            <input
+            <Input
               type="tel"
               value={clientPhoneNumber}
               onChange={(e) => setClientPhoneNumber(e.target.value)}
@@ -173,12 +175,12 @@ export default function PageThree() {
       </div>
 
       <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
-        <button onClick={generatePreview} disabled={!templateBuffer}>
+        <Button onClick={generatePreview} disabled={!templateBuffer}>
           Generate Document
-        </button>
-        <button onClick={downloadDocument} disabled={!generatedBuffer}>
+        </Button>
+        <Button onClick={downloadDocument} disabled={!generatedBuffer}>
           Download Filled Document
-        </button>
+        </Button>
       </div>
 
       <div

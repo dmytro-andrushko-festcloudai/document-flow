@@ -1,6 +1,8 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { createReport } from 'docx-templates';
 import { renderAsync } from 'docx-preview';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 const Page4 = () => {
   const loadInitialData = () => {
@@ -212,7 +214,7 @@ const Page4 = () => {
         <div>
           <label>
             Company Name:
-            <input
+            <Input
               type="text"
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
@@ -222,7 +224,7 @@ const Page4 = () => {
         <div>
           <label>
             Company Address:
-            <input
+            <Input
               type="text"
               value={companyAddress}
               onChange={(e) => setCompanyAddress(e.target.value)}
@@ -232,7 +234,7 @@ const Page4 = () => {
         <div>
           <label>
             Company Phone Number:
-            <input
+            <Input
               type="tel"
               value={companyPhoneNumber}
               onChange={(e) => setCompanyPhoneNumber(e.target.value)}
@@ -243,7 +245,7 @@ const Page4 = () => {
         <div>
           <label>
             Client Company Name:
-            <input
+            <Input
               type="text"
               value={clientCompanyName}
               onChange={(e) => setClientCompanyName(e.target.value)}
@@ -253,7 +255,7 @@ const Page4 = () => {
         <div>
           <label>
             Client Address:
-            <input
+            <Input
               type="text"
               value={clientAddress}
               onChange={(e) => setClientAddress(e.target.value)}
@@ -263,7 +265,7 @@ const Page4 = () => {
         <div>
           <label>
             Client Phone Number:
-            <input
+            <Input
               type="tel"
               value={clientPhoneNumber}
               onChange={(e) => setClientPhoneNumber(e.target.value)}
@@ -278,15 +280,15 @@ const Page4 = () => {
       </div>
 
       <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
-        <button onClick={generatePreview} disabled={!templateBuffer}>
+        <Button onClick={generatePreview} disabled={!templateBuffer}>
           Generate Document
-        </button>
-        <button onClick={downloadDocument} disabled={!generatedBuffer}>
+        </Button>
+        <Button onClick={downloadDocument} disabled={!generatedBuffer}>
           Download Filled Document
-        </button>
-        <button onClick={onTemplateChosen} disabled={!myFile}>
+        </Button>
+        <Button onClick={onTemplateChosen} disabled={!myFile}>
           Generate Simple Report
-        </button>
+        </Button>
       </div>
 
       <div
