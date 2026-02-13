@@ -3,3 +3,30 @@
   margin: 0 auto;
   padding: 2rem;
 }
+
+/* Fix height issues for @pdfme/ui components */
+.pdfme-form-container,
+.pdfme-designer-container,
+.pdfme-viewer,
+.pdfme-wrapper,
+.pdfme-container {
+  min-height: 800px !important;
+  height: 800px !important;
+  overflow: hidden !important;
+}
+
+/* Target any div elements inside the PDF containers that might be auto-sizing */
+.pdfme-form-container > div,
+.pdfme-designer-container > div {
+  min-height: 800px !important;
+  height: 800px !important;
+}
+
+/* Ensure canvas and SVG elements maintain size */
+.pdfme-form-container canvas,
+.pdfme-designer-container canvas,
+.pdfme-form-container svg,
+.pdfme-designer-container svg {
+  max-height: 800px !important;
+  height: auto !important;
+}

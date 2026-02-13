@@ -1,8 +1,17 @@
 import { HashRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
-import Pdf1 from './pages/pdf1/Pdf1';
-import Pdf2 from './pages/pdf2/Pdf2';
-import Docx1 from './pages/docx1/Docx1';
-import Docx2 from './pages/docx2/Docx2';
+import { lazy, Suspense } from 'react';
+
+// Lazy load pages to prevent PDF.js version conflicts between @pdfme and pdfjs-dist
+const Pdf1 = lazy(() => import('./pages/pdf1/Pdf1'));
+const Pdf2 = lazy(() => import('./pages/pdf2/Pdf2'));
+const Pdf3 = lazy(() => import('./pages/pdf3/Pdf3'));
+const Pdf4 = lazy(() => import('./pages/pdf4/Pdf4'));
+const Docx1 = lazy(() => import('./pages/docx1/Docx1'));
+const Docx2 = lazy(() => import('./pages/docx2/Docx2'));
+const Docx3 = lazy(() => import('./pages/docx3/Docx3'));
+const Docx4 = lazy(() => import('./pages/docx4/Docx4'));
+const Docx5 = lazy(() => import('./pages/docx5/Docx5'));
+
 import {
   Sidebar,
   SidebarHeader,
@@ -18,13 +27,20 @@ function App() {
     <Router>
       <AppSidebar />
       <main className="min-h-screen overflow-auto p-6 ml-75">
-        <Routes>
-          <Route path="/" element={<Navigate to="/docx1" replace />} />
-          <Route path="/docx1" element={<Docx1 />} />
-          <Route path="/docx2" element={<Docx2 />} />
-          <Route path="/pdf1" element={<Pdf1 />} />
-          <Route path="/pdf2" element={<Pdf2 />} />
-        </Routes>
+        <Suspense fallback={<div className="p-6">Loading...</div>}>
+          <Routes>
+            <Route path="/" element={<Navigate to="/docx1" replace />} />
+            <Route path="/docx1" element={<Docx1 />} />
+            <Route path="/docx2" element={<Docx2 />} />
+            <Route path="/docx3" element={<Docx3 />} />
+            <Route path="/docx4" element={<Docx4 />} />
+            <Route path="/docx5" element={<Docx5 />} />
+            <Route path="/pdf1" element={<Pdf1 />} />
+            <Route path="/pdf2" element={<Pdf2 />} />
+            <Route path="/pdf3" element={<Pdf3 />} />
+            <Route path="/pdf4" element={<Pdf4 />} />
+          </Routes>
+        </Suspense>
       </main>
     </Router>
   );
@@ -34,13 +50,21 @@ function AppSidebar() {
   const location = useLocation();
 
   const pdfLibraries = [
-    { name: '@react-pdf/renderer', href: '/pdf1' },
+    { name: '@react-pdf', href: '/pdf1' },
     { name: '@pdfme', href: '/pdf2' },
+    { name: 'PDF.js', href: '/pdf3' },
+    { name: 'iframe & object', href: '/pdf4' },
   ];
 
   const docxLibraries = [
     { name: 'docxtemplater(paid modules)', href: '/docx1' },
     { name: 'docx-templates(free)', href: '/docx2' },
+    { name: 'easy-template-x', href: '/docx5' },
+  ];
+
+  const docxEditors = [
+    { name: 'tiptap', href: '/docx3' },
+    { name: '@hufe921/canvas-editor', href: '/docx4' },
   ];
 
   return (
@@ -57,6 +81,22 @@ function AppSidebar() {
             </h3>
             <SidebarMenu>
               {docxLibraries.map((item) => (
+                <SidebarMenuItem key={item.name}>
+                  <SidebarMenuButton asChild isActive={location.pathname === item.href}>
+                    <Link to={item.href}>
+                      <span className="font-mono text-xs">{item.name}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </div>
+          <div>
+            <h3 className="px-3 py-2 text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+              DOCX Editors
+            </h3>
+            <SidebarMenu>
+              {docxEditors.map((item) => (
                 <SidebarMenuItem key={item.name}>
                   <SidebarMenuButton asChild isActive={location.pathname === item.href}>
                     <Link to={item.href}>
