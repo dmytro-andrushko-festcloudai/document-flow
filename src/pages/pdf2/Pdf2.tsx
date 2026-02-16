@@ -1,42 +1,21 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import type { Template } from '@pdfme/common';
 import { BLANK_A4_PDF } from '@pdfme/common';
-import { Form } from '@pdfme/ui';
+import { Form, Designer } from '@pdfme/ui';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { INITIAL_FORM_DATA } from '@/constants';
 
 export default function Pdf2() {
-  const loadInitialData = () => {
-    const data = localStorage.getItem('page2FormData');
-    if (data) {
-      const parsed = JSON.parse(data);
-      return {
-        companyName: parsed.companyName || 'Festcloud.ai',
-        companyAddress: parsed.companyAddress || 'Lviv, Ukraine',
-        companyPhoneNumber: parsed.companyPhoneNumber || '032-12345678',
-        clientCompanyName: parsed.clientCompanyName || 'Zahidfest',
-        clientAddress: parsed.clientAddress || 'Lviv, Ukraine',
-        clientPhoneNumber: parsed.clientPhoneNumber || '032-87654321',
-      };
-    }
-    return {
-      companyName: 'Festcloud.ai',
-      companyAddress: 'Lviv, Ukraine',
-      companyPhoneNumber: '032-12345678',
-      clientCompanyName: 'Zahidfest',
-      clientAddress: 'Lviv, Ukraine',
-      clientPhoneNumber: '032-87654321',
-    };
-  };
-
-  const initialData = loadInitialData();
-
-  const [companyName, setCompanyName] = useState(initialData.companyName);
-  const [companyAddress, setCompanyAddress] = useState(initialData.companyAddress);
-  const [companyPhoneNumber, setCompanyPhoneNumber] = useState(initialData.companyPhoneNumber);
-  const [clientCompanyName, setClientCompanyName] = useState(initialData.clientCompanyName);
-  const [clientAddress, setClientAddress] = useState(initialData.clientAddress);
-  const [clientPhoneNumber, setClientPhoneNumber] = useState(initialData.clientPhoneNumber);
+  const [companyName, setCompanyName] = useState(INITIAL_FORM_DATA.companyName);
+  const [companyAddress, setCompanyAddress] = useState(INITIAL_FORM_DATA.companyAddress);
+  const [companyPhoneNumber, setCompanyPhoneNumber] = useState(
+    INITIAL_FORM_DATA.companyPhoneNumber
+  );
+  const [clientCompanyName, setClientCompanyName] = useState(INITIAL_FORM_DATA.clientCompanyName);
+  const [clientAddress, setClientAddress] = useState(INITIAL_FORM_DATA.clientAddress);
+  const [clientPhoneNumber, setClientPhoneNumber] = useState(INITIAL_FORM_DATA.clientPhoneNumber);
   const [template, setTemplate] = useState<Template>({
     basePdf: BLANK_A4_PDF,
     schemas: [
@@ -81,57 +60,26 @@ export default function Pdf2() {
     ],
   });
   const previewRef = useRef<HTMLDivElement>(null);
-  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const designerRef = useRef<HTMLDivElement>(null);
 
-  const saveToLocalStorage = useCallback(() => {
-    const data = {
+  const formData = useMemo(
+    () => ({
       companyName,
       companyAddress,
       companyPhoneNumber,
       clientCompanyName,
       clientAddress,
       clientPhoneNumber,
-    };
-    localStorage.setItem('page2FormData', JSON.stringify(data));
-  }, [
-    companyName,
-    companyAddress,
-    companyPhoneNumber,
-    clientCompanyName,
-    clientAddress,
-    clientPhoneNumber,
-  ]);
-
-  useEffect(() => {
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-    autoSaveTimeoutRef.current = setTimeout(() => {
-      saveToLocalStorage();
-    }, 2000);
-    return () => {
-      if (autoSaveTimeoutRef.current) {
-        clearTimeout(autoSaveTimeoutRef.current);
-      }
-    };
-  }, [
-    companyName,
-    companyAddress,
-    companyPhoneNumber,
-    clientCompanyName,
-    clientAddress,
-    clientPhoneNumber,
-    saveToLocalStorage,
-  ]);
-
-  const formData = {
-    companyName,
-    companyAddress,
-    companyPhoneNumber,
-    clientCompanyName,
-    clientAddress,
-    clientPhoneNumber,
-  };
+    }),
+    [
+      companyName,
+      companyAddress,
+      companyPhoneNumber,
+      clientCompanyName,
+      clientAddress,
+      clientPhoneNumber,
+    ]
+  );
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -161,12 +109,23 @@ export default function Pdf2() {
         template,
         inputs: [formData],
         domContainer: previewRef.current,
-        options: { readOnly: true },
+        options: {
+          readOnly: true,
+          height: 800,
+        },
       });
-
-      // Note: @pdfme/ui doesn't provide direct PDF generation in browser
-      // For now, we'll just show the preview. PDF generation would require
-      // server-side processing or additional libraries
+    }
+    if (designerRef.current) {
+      // Clear previous designer
+      designerRef.current.innerHTML = '';
+      // Create new Designer instance
+      new Designer({
+        template,
+        domContainer: designerRef.current,
+        options: {
+          height: 800,
+        },
+      });
     }
   }, [template, formData]);
 
@@ -182,9 +141,22 @@ export default function Pdf2() {
 
   return (
     <div>
-      <h2 className="text-3xl font-medium mb-6">PDF Forms with @pdfme/ui</h2>
-      <div style={{ marginBottom: '20px' }}>
-        <div style={{ marginBottom: '15px' }}>
+      <h1 className="text-3xl font-medium mb-6">PDF Forms with @pdfme/ui</h1>
+
+      <h3 style={{ fontWeight: 'bold', marginBottom: '20px' }}>
+        pdf forms created with{'  '}
+        <a
+          href="https://www.npmjs.com/package/@pdfme/ui"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800"
+        >
+          <em>@pdfme/ui</em>
+        </a>{' '}
+        package
+      </h3>
+      <div style={{ marginBottom: '52px' }}>
+        <div style={{ marginBottom: '16px' }}>
           <h4 style={{ marginBottom: '10px', fontWeight: 'bold' }}>Company Information</h4>
           <div style={{ display: 'flex', gap: '20px' }}>
             <div style={{ flex: 1 }}>
@@ -267,22 +239,45 @@ export default function Pdf2() {
         </div>
       </div>
 
-      <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
+      <div style={{ marginBottom: '24px', display: 'flex', gap: '10px' }}>
         <Button onClick={generatePreview}>Generate Preview</Button>
         <Button onClick={downloadDocument} disabled>
           Download (Not Available)
         </Button>
       </div>
 
-      <div
-        ref={previewRef}
-        style={{
-          marginTop: '20px',
-          border: '1px solid #ccc',
-          padding: '20px',
-          minHeight: '500px',
+      <Tabs
+        defaultValue="preview"
+        className="w-full"
+        onValueChange={() => {
+          generatePreview();
         }}
-      />
+      >
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="preview">Preview</TabsTrigger>
+          <TabsTrigger value="edit">Edit</TabsTrigger>
+        </TabsList>
+        <TabsContent value="preview" className="mt-6">
+          <div
+            ref={previewRef}
+            style={{
+              border: '1px solid #ccc',
+              height: '800px',
+              minHeight: '800px',
+            }}
+          />
+        </TabsContent>
+        <TabsContent value="edit" className="mt-6">
+          <div
+            ref={designerRef}
+            style={{
+              border: '1px solid #ccc',
+              height: '800px',
+              minHeight: '800px',
+            }}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
