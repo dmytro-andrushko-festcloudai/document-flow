@@ -53,6 +53,12 @@ function buildAdditionalContext(
       if (!rows.length) return 0;
       return Math.max(...rows.map((r) => parseFloat(r[colKey] ?? '0') || 0));
     },
+    SUMPRODUCT(varName: string, ...colKeys: string[]): number {
+      return getRows(varName).reduce((acc, row) => {
+        const product = colKeys.reduce((p, key) => p * (parseFloat(row[key] ?? '0') || 0), 1);
+        return acc + product;
+      }, 0);
+    },
   };
 }
 
@@ -88,10 +94,7 @@ const DocxPreview = memo(
       containerRef.current.innerHTML = '';
       await renderAsync(blob, containerRef.current);
       const style = document.createElement('style');
-      style.textContent = `
-        .docx-wrapper * { text-align: left !important; }
-        .docx-wrapper table { margin: 0 auto; }
-      `;
+      style.textContent = `.docx-wrapper table { margin: 0 auto; }`;
       containerRef.current.appendChild(style);
     }, []);
 
