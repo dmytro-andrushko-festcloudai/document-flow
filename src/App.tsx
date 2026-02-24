@@ -24,7 +24,7 @@ function App() {
   return (
     <Router>
       <AppSidebar />
-      <main className="min-h-screen overflow-auto p-6 ml-75">
+      <main className="min-h-screen overflow-auto w-full h-full p-8">
         <Suspense fallback={<div className="p-6">Loading...</div>}>
           <Routes>
             <Route path="/" element={<Navigate to="/docx1" replace />} />
