@@ -18,6 +18,44 @@ function buildTemplateData(
   return data;
 }
 
+function buildAdditionalContext(
+  fields: FieldDefinition[],
+  tables: TableDefinition[]
+): Record<string, unknown> {
+  const data = buildTemplateData(fields, tables);
+  const getRows = (varName: string) =>
+    tables.find((t) => t.varName === varName)?.rows ?? [];
+
+  return {
+    ...data,
+    SUM(varName: string, colKey: string): number {
+      return getRows(varName).reduce((acc, row) => {
+        const val = parseFloat(row[colKey] ?? '0');
+        return acc + (isNaN(val) ? 0 : val);
+      }, 0);
+    },
+    AVG(varName: string, colKey: string): number {
+      const rows = getRows(varName);
+      if (!rows.length) return 0;
+      const total = rows.reduce((acc, row) => acc + (parseFloat(row[colKey] ?? '0') || 0), 0);
+      return total / rows.length;
+    },
+    COUNT(varName: string): number {
+      return getRows(varName).length;
+    },
+    MIN(varName: string, colKey: string): number {
+      const rows = getRows(varName);
+      if (!rows.length) return 0;
+      return Math.min(...rows.map((r) => parseFloat(r[colKey] ?? '0') || 0));
+    },
+    MAX(varName: string, colKey: string): number {
+      const rows = getRows(varName);
+      if (!rows.length) return 0;
+      return Math.max(...rows.map((r) => parseFloat(r[colKey] ?? '0') || 0));
+    },
+  };
+}
+
 function toBlob(buffer: Uint8Array): Blob {
   return new Blob([buffer as unknown as BlobPart], { type: DOCX_MIME });
 }
@@ -65,7 +103,7 @@ const DocxPreview = memo(
           const buffer = (await createReport({
             template: templateBuffer,
             data,
-            additionalJsContext: data,
+            additionalJsContext: buildAdditionalContext(fields, tables),
             cmdDelimiter: ['{', '}'],
             noSandbox: true,
             fixSmartQuotes: true,
