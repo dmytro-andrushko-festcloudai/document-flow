@@ -53,16 +53,23 @@ const DangerButton = ({
 const TableEditor = ({ table, onChange, onRemove }: Props) => {
   const [newColKey, setNewColKey] = useState('');
   const [newColLabel, setNewColLabel] = useState('');
+  const [newColDescription, setNewColDescription] = useState('');
 
   const addColumn = () => {
     const key = newColKey.trim();
     const label = newColLabel.trim();
+    const description = newColDescription.trim();
     if (!key || !label) return;
     if (table.columns.some((c) => c.key === key)) {
       alert(`Column with key "${key}" already exists.`);
       return;
     }
-    const col: ColumnDefinition = { id: crypto.randomUUID(), key, label };
+    const col: ColumnDefinition = {
+      id: crypto.randomUUID(),
+      key,
+      label,
+      description: description || undefined,
+    };
     onChange({
       ...table,
       columns: [...table.columns, col],
@@ -70,6 +77,7 @@ const TableEditor = ({ table, onChange, onRemove }: Props) => {
     });
     setNewColKey('');
     setNewColLabel('');
+    setNewColDescription('');
   };
 
   const removeColumn = (colId: string) => {
@@ -156,6 +164,19 @@ const TableEditor = ({ table, onChange, onRemove }: Props) => {
             onKeyDown={(e) => e.key === 'Enter' && addColumn()}
           />
         </div>
+        <div style={{ flex: 1 }}>
+          <label
+            style={{ fontSize: '12px', color: '#374151', display: 'block', marginBottom: '3px' }}
+          >
+            Description (optional)
+          </label>
+          <Input
+            placeholder="e.g. Unit price in UAH"
+            value={newColDescription}
+            onChange={(e) => setNewColDescription(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && addColumn()}
+          />
+        </div>
         <Button
           onClick={addColumn}
           disabled={!newColKey.trim() || !newColLabel.trim()}
@@ -181,9 +202,25 @@ const TableEditor = ({ table, onChange, onRemove }: Props) => {
                   padding: '4px 10px',
                   fontSize: '13px',
                 }}
+                title={col.description ?? undefined}
               >
                 <span style={{ color: '#111827' }}>{col.label}</span>
                 <span style={{ ...mono, marginLeft: '2px' }}>{`{$item.${col.key}}`}</span>
+                {col.description && (
+                  <span
+                    style={{
+                      fontSize: '11px',
+                      color: '#6b7280',
+                      marginLeft: '4px',
+                      maxWidth: '120px',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    — {col.description}
+                  </span>
+                )}
                 <DangerButton onClick={() => removeColumn(col.id)} title="Remove column" inline>
                   ×
                 </DangerButton>

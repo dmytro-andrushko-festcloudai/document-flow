@@ -3,12 +3,14 @@ export interface FieldDefinition {
   key: string;
   label: string;
   value: string;
+  description?: string;
 }
 
 export interface ColumnDefinition {
   id: string;
   key: string;
   label: string;
+  description?: string;
 }
 
 export interface TableDefinition {

@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+import * as XLSX from 'xlsx';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import invoiceUrl from '@/assets/INVOICE.docx?url';
@@ -40,22 +41,26 @@ const cardTitle: React.CSSProperties = {
 // ---------------------------------------------------------------------------
 interface FieldBuilderProps {
   fields: FieldDefinition[];
-  onAdd: (key: string, label: string) => void;
+  onAdd: (key: string, label: string, description: string) => void;
+  onUpdate: (id: string, patch: Partial<Pick<FieldDefinition, 'label' | 'description'>>) => void;
   onRemove: (id: string) => void;
   onClearAll: () => void;
 }
 
-const FieldBuilder = ({ fields, onAdd, onRemove, onClearAll }: FieldBuilderProps) => {
+const FieldBuilder = ({ fields, onAdd, onUpdate, onRemove, onClearAll }: FieldBuilderProps) => {
   const [key, setKey] = useState('');
   const [label, setLabel] = useState('');
+  const [description, setDescription] = useState('');
 
   const handleAdd = () => {
     const k = key.trim();
     const l = label.trim();
+    const d = description.trim();
     if (!k || !l) return;
-    onAdd(k, l);
+    onAdd(k, l, d);
     setKey('');
     setLabel('');
+    setDescription('');
   };
 
   return (
@@ -125,6 +130,19 @@ const FieldBuilder = ({ fields, onAdd, onRemove, onClearAll }: FieldBuilderProps
             onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
           />
         </div>
+        <div style={{ flex: 1 }}>
+          <label
+            style={{ fontSize: '13px', color: '#374151', display: 'block', marginBottom: '4px' }}
+          >
+            Description (optional)
+          </label>
+          <Input
+            placeholder="e.g. Used in invoice header"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
+          />
+        </div>
         <Button
           onClick={handleAdd}
           disabled={!key.trim() || !label.trim()}
@@ -146,7 +164,7 @@ const FieldBuilder = ({ fields, onAdd, onRemove, onClearAll }: FieldBuilderProps
                     fontSize: '12px',
                     color: '#6b7280',
                     fontWeight: 600,
-                    width: '30%',
+            width: '25%',
                   }}
                 >
                   Key
@@ -161,6 +179,17 @@ const FieldBuilder = ({ fields, onAdd, onRemove, onClearAll }: FieldBuilderProps
                   }}
                 >
                   Label
+                </th>
+                <th
+                  style={{
+                    textAlign: 'left',
+                    padding: '8px 12px',
+                    fontSize: '12px',
+                    color: '#6b7280',
+                    fontWeight: 600,
+                  }}
+                >
+                  Description
                 </th>
                 <th style={{ width: '40px' }} />
               </tr>
@@ -185,7 +214,33 @@ const FieldBuilder = ({ fields, onAdd, onRemove, onClearAll }: FieldBuilderProps
                     {`{${field.key}}`}
                   </td>
                   <td style={{ padding: '8px 12px', fontSize: '13px', color: '#374151' }}>
-                    {field.label}
+                    <Input
+                      value={field.label}
+                      onChange={(e) =>
+                        onUpdate(field.id, {
+                          label: e.target.value,
+                        })
+                      }
+                      style={{ height: '32px', fontSize: '13px' }}
+                    />
+                  </td>
+                  <td
+                    style={{
+                      padding: '8px 12px',
+                      fontSize: '13px',
+                      color: '#6b7280',
+                    }}
+                  >
+                    <Input
+                      placeholder="No description"
+                      value={field.description ?? ''}
+                      onChange={(e) =>
+                        onUpdate(field.id, {
+                          description: e.target.value,
+                        })
+                      }
+                      style={{ height: '32px', fontSize: '13px' }}
+                    />
                   </td>
                   <td style={{ padding: '8px 12px', textAlign: 'center' }}>
                     <button
@@ -377,13 +432,21 @@ const Docx2 = () => {
   }, [fields, tables, templateBuffer]);
 
   // Field handlers
-  const addField = (key: string, label: string) => {
+  const addField = (key: string, label: string, description: string) => {
     if (fields.some((f) => f.key === key)) {
       alert(`Field with key "${key}" already exists.`);
       return;
     }
-    setFields((prev) => [...prev, { id: crypto.randomUUID(), key, label, value: '' }]);
+    setFields((prev) => [
+      ...prev,
+      { id: crypto.randomUUID(), key, label, description, value: '' },
+    ]);
   };
+  const updateFieldMeta = (
+    id: string,
+    patch: Partial<Pick<FieldDefinition, 'label' | 'description'>>
+  ) =>
+    setFields((prev) => prev.map((f) => (f.id === id ? { ...f, ...patch } : f)));
   const removeField = (id: string) => setFields((prev) => prev.filter((f) => f.id !== id));
   const updateFieldValue = (id: string, value: string) =>
     setFields((prev) => prev.map((f) => (f.id === id ? { ...f, value } : f)));
@@ -444,6 +507,59 @@ const Docx2 = () => {
     document.body.removeChild(a);
   };
 
+  const exportToExcel = () => {
+    const wb = XLSX.utils.book_new();
+
+    if (fields.length > 0) {
+      const fieldsData = fields.map((f) => ({
+        Key: `{${f.key}}`,
+        Label: f.label,
+        Description: f.description ?? '',
+        Value: f.value,
+      }));
+      const wsFields = XLSX.utils.json_to_sheet(fieldsData);
+      XLSX.utils.book_append_sheet(wb, wsFields, 'Поля');
+    }
+
+    const tableColumnsData = tables.flatMap((table) =>
+      table.columns.map((col) => ({
+        'Таблиця': table.label,
+        'Змінна': table.varName,
+        'Ключ колонки': `{$item.${col.key}}`,
+        'Лейбл': col.label,
+        'Опис': col.description ?? '',
+      }))
+    );
+    if (tableColumnsData.length > 0) {
+      const wsTableColumns = XLSX.utils.json_to_sheet(tableColumnsData);
+      XLSX.utils.book_append_sheet(wb, wsTableColumns, 'Поля таблиць');
+    }
+
+    tables.forEach((table) => {
+      const headers = table.columns.map((c) => c.label);
+      const rows = table.rows.map((row) =>
+        table.columns.reduce<Record<string, string>>(
+          (acc, col) => {
+            acc[col.label] = row[col.key] ?? '';
+            return acc;
+          },
+          {}
+        )
+      );
+      const data = [headers, ...rows.map((r) => headers.map((h) => r[h] ?? ''))];
+      const wsTable = XLSX.utils.aoa_to_sheet(data);
+      const sheetName = table.label.replace(/[:\\/?*[\]]/g, ' ').slice(0, 31) || table.varName;
+      XLSX.utils.book_append_sheet(wb, wsTable, sheetName);
+    });
+
+    if (wb.SheetNames.length === 0) {
+      const emptyWs = XLSX.utils.aoa_to_sheet([['Немає даних для експорту']]);
+      XLSX.utils.book_append_sheet(wb, emptyWs, 'Дані');
+    }
+
+    XLSX.writeFile(wb, 'document-fields.xlsx');
+  };
+
   return (
     <div className="field-builder-row">
       <div style={{ textAlign: 'left' }}>
@@ -473,6 +589,7 @@ const Docx2 = () => {
         <FieldBuilder
           fields={fields}
           onAdd={addField}
+          onUpdate={updateFieldMeta}
           onRemove={removeField}
           onClearAll={clearAllFields}
         />
@@ -485,6 +602,18 @@ const Docx2 = () => {
           onUpdate={updateTable}
           onRemove={removeTable}
         />
+
+        {(fields.length > 0 || tables.length > 0) && (
+          <div style={card}>
+            <p style={{ ...cardTitle, marginBottom: '8px' }}>Експорт даних</p>
+            <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '12px' }}>
+              Вигрузити всі заповнені поля та таблиці в файл Excel.
+            </p>
+            <Button onClick={exportToExcel} variant="outline">
+              Вигрузити в Excel
+            </Button>
+          </div>
+        )}
       </div>
 
       <div style={{ ...card, background: '#fff', padding: '0', overflow: 'hidden', flex: 1 }}>
